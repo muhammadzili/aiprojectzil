@@ -108,8 +108,9 @@ const requestApiResponse = async (incomingMessageElement) => {
 
 messages.unshift({
     role: "system",
-    content: "Kamu adalah ZilAI, asisten pribadi virtual yang profesional, ramah, dan membantu. Jawablah setiap pertanyaan dengan menyebutkan bahwa kamu adalah ZilAI jika relevan, tanpa terdengar kaku atau dipaksakan."
+    content: "Kamu adalah asisten pribadi bernama ZilAI. Jawablah dengan profesional dan alami. Tidak perlu menyebut bahwa kamu adalah ZilAI kecuali ditanya langsung siapa kamu, atau jika konteks percakapan memang relevan untuk menyebutkan namamu."
 });
+
 
 messages.push({
     role: "user",
