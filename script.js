@@ -15,15 +15,7 @@ document.addEventListener('DOMContentLoaded', function () {
     let selectedProvider = "groq";
     let selectedModel = "llama3-8b-8192";
 
-    document.getElementById("providerSelect").addEventListener("change", (e) => {
-        selectedProvider = e.target.value;
-    });
-
-    document.getElementById("modelSelect").addEventListener("change", (e) => {
-        selectedModel = e.target.value;
-    });
-
-    // Load saved chat history from localStorage
+    // Function to load saved chat history from localStorage
     const loadSavedChatHistory = () => {
         const savedConversations = JSON.parse(localStorage.getItem("saved-api-chats")) || [];
         const isLightTheme = localStorage.getItem("themeColor") === "light_mode";
@@ -39,6 +31,7 @@ document.addEventListener('DOMContentLoaded', function () {
         document.body.classList.toggle("hide-header", savedConversations.length > 0);
     };
 
+    // Function to render a conversation
     const renderConversation = (conversation) => {
         const userMessageHtml = `
             <div class="message__content">
@@ -109,7 +102,6 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     const getResponseText = (apiResponse) => {
-        // Determine if response is from Gemini or Groq
         if (typeof apiResponse === "string") {
             return apiResponse;
         }
@@ -185,34 +177,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     };
 
-    const addCopyButtonToCodeBlocks = () => {
-        const codeBlocks = document.querySelectorAll('pre');
-        codeBlocks.forEach((block) => {
-            const codeElement = block.querySelector('code');
-            let language = [...codeElement.classList].find(cls => cls.startsWith('language-'))?.replace('language-', '') || 'Text';
-
-            const languageLabel = document.createElement('div');
-            languageLabel.innerText = language.charAt(0).toUpperCase() + language.slice(1);
-            languageLabel.classList.add('code__language-label');
-            block.appendChild(languageLabel);
-
-            const copyButton = document.createElement('button');
-            copyButton.innerHTML = `<i class='bx bx-copy'></i>`;
-            copyButton.classList.add('code__copy-btn');
-            block.appendChild(copyButton);
-
-            copyButton.addEventListener('click', () => {
-                navigator.clipboard.writeText(codeElement.innerText).then(() => {
-                    copyButton.innerHTML = `<i class='bx bx-check'></i>`;
-                    setTimeout(() => copyButton.innerHTML = `<i class='bx bx-copy'></i>`, 2000);
-                }).catch(err => {
-                    console.error("Copy failed:", err);
-                    alert("Unable to copy text!");
-                });
-            });
-        });
-    };
-
     const displayLoadingAnimation = () => {
         const loadingHtml = `
             <div class="message__content">
@@ -257,12 +221,14 @@ document.addEventListener('DOMContentLoaded', function () {
         setTimeout(displayLoadingAnimation, 100);
     };
 
+    // Theme toggle button event
     themeToggleButton.addEventListener('click', () => {
         const isLightTheme = document.body.classList.toggle("light_mode");
         localStorage.setItem("themeColor", isLightTheme ? "light_mode" : "dark_mode");
         themeToggleButton.querySelector("i").className = isLightTheme ? "bi bi-moon-fill" : "bi bi-brightness-high-fill";
     });
 
+    // Clear chat history event
     clearChatButton.addEventListener('click', () => {
         if (confirm("Are you sure you want to delete all chat history?")) {
             localStorage.removeItem("saved-api-chats");
@@ -273,6 +239,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
+    // Suggestion item click event
     suggestionItems.forEach(suggestion => {
         suggestion.addEventListener('click', () => {
             currentUserMessage = suggestion.querySelector(".suggests__item-text").innerText;
@@ -280,9 +247,13 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
+    // Form submit event
     messageForm.addEventListener('submit', (e) => {
         e.preventDefault(); // prevent form submission
-        handleOutgoingMessage();
+        currentUserMessage = document.querySelector(".prompt__input").value.trim();
+        if (currentUserMessage) {
+            handleOutgoingMessage();
+        }
     });
 
     loadSavedChatHistory();
