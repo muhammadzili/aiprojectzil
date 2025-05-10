@@ -98,7 +98,41 @@
 
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-    <script src="script.js"></script>
+    <script src="script.js">document.addEventListener('DOMContentLoaded', function () {
+    const providerSelect = document.getElementById('providerSelect');
+    const modelSelect = document.getElementById('modelSelect');
+
+    // Function to update models based on selected provider
+    const updateModels = (provider) => {
+        let models = [];
+
+        if (provider === 'groq') {
+            models = ['Groq Model 1', 'Groq Model 2', 'Groq Model 3'];  // Daftar model untuk Groq
+        } else if (provider === 'gemini') {
+            models = ['Gemini 1.0', 'Gemini 2.0 Flash', 'Gemini 3.0'];  // Daftar model untuk Gemini
+        }
+
+        // Clear the existing options
+        modelSelect.innerHTML = '';
+
+        // Populate the model select options
+        models.forEach((model) => {
+            const option = document.createElement('option');
+            option.value = model.toLowerCase().replace(/\s+/g, '-');  // Mengubah nama model menjadi format yang sesuai
+            option.textContent = model;
+            modelSelect.appendChild(option);
+        });
+    };
+
+    // Initialize with default provider
+    updateModels(providerSelect.value);
+
+    // Event listener untuk mengubah pilihan model saat provider diubah
+    providerSelect.addEventListener('change', function () {
+        updateModels(providerSelect.value);
+    });
+});
+</script>
 </body>
 
 </html>
