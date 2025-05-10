@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ZilAI - Home</title>
+  <link rel="shortcut icon" href="assets/zilai.png" type="image/x-icon">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  <style>
+    body {
+      font-family: 'Open Sans', sans-serif;
+    }
+    .floating-nav {
+      backdrop-filter: blur(10px);
+      background-color: rgba(21, 21, 21, 0.85);
+    }
+    .slide-down {
+      animation: slideDown 0.3s ease forwards;
+    }
+    @keyframes slideDown {
+      0% { transform: scaleY(0); transform-origin: top; opacity: 0; }
+      100% { transform: scaleY(1); transform-origin: top; opacity: 1; }
+    }
+  </style>
+</head>
+<body class="bg-[#0f0f0f] text-white text-sm">
+  <!-- Navbar -->
+  <nav class="floating-nav sticky top-0 z-50 flex justify-between items-center px-8 py-5 border-b border-[#2c2c2c]">
+    <h1 class="text-xl font-semibold tracking-wide">ZilAI</h1>
+    <button id="menuBtn" class="md:hidden text-white focus:outline-none">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+      </svg>
+    </button>
+    <ul id="navMenu" class="hidden md:flex flex-col md:flex-row md:space-x-6 text-sm absolute md:static top-full left-0 w-full md:w-auto bg-[#151515] md:bg-transparent transform origin-top md:transform-none">
+      <li><a href="#features" class="block py-2 md:py-0 px-6 hover:text-blue-400 transition">Fitur</a></li>
+      <li><a href="#faq" class="block py-2 md:py-0 px-6 hover:text-blue-400 transition">FAQ</a></li>
+      <li><a href="#contact" class="block py-2 md:py-0 px-6 hover:text-blue-400 transition">Kontak</a></li>
+    </ul>
+  </nav>
+
+  <!-- Hero / CTA -->
+  <section class="text-center px-6 py-72 bg-gradient-to-b from-[#0f0f0f] via-[#1a1a1a] to-[#0f0f0f]">
+    <h2 class="text-4xl md:text-6xl font-extrabold leading-tight tracking-tight bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 bg-clip-text text-transparent">
+      Asisten AI Pribadi Anda
+    </h2>
+    <p class="text-[#C0C0C0] mt-6 max-w-xl mx-auto">
+      Permudah hidup dan pekerjaan Anda dengan AI canggih berbasis teknologi modern.
+    </p>
+    <div class="mt-10 flex flex-col md:flex-row justify-center gap-4">
+      <button class="px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-full font-semibold transition" onclick="location.href='/chat'">Mulai Sekarang</button>
+      <button class="px-6 py-3 border border-gray-500 hover:bg-gray-700 rounded-full font-semibold transition">Pelajari Lebih Lanjut</button>
+    </div>
+  </section>
+
+<!-- Section: Gemini 2.0 Flash -->
+<section class="px-6 py-20 bg-[#0f0f0f] text-center relative">
+  <div class="gemini-box w-full md:w-4/5 lg:w-3/5 mx-auto p-8 bg-[#1e1e1e] rounded-3xl shadow-xl animate-floating">
+    <h3 class="text-3xl font-bold mb-6 tracking-tight text-transparent bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 bg-clip-text">
+      Dengan <span class="text-blue-500">GEMINI 2.0 FLASH</span>
+    </h3>
+    <p class="text-[#C0C0C0] max-w-2xl mx-auto">
+      Versi terbaru dengan kemampuan lebih cepat, lebih pintar, dan lebih efisien. Rasakan kehebatan AI yang dirancang untuk memenuhi kebutuhan produktivitas Anda secara instan.
+    </p>
+  </div>
+</section>
+
+<!-- CSS Animasi -->
+<style>
+  @keyframes floating {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+    100% { transform: translateY(0); }
+  }
+
+  .animate-floating {
+    animation: floating 3s ease-in-out infinite;
+  }
+
+  /* Responsif */
+  .gemini-box {
+    position: relative;
+  }
+
+  @media (max-width: 768px) {
+    .gemini-box {
+      width: 90%;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .gemini-box {
+      width: 95%;
+      padding: 5%;
+    }
+  }
+</style>
+  <!-- Section: Jumlah Pengguna -->
+  <section class="px-6 py-20 bg-[#0f0f0f] text-center">
+    <h3 class="text-3xl font-bold mb-4 tracking-tight">Bergabunglah dengan Jutaan Pengguna</h3>
+    <p class="text-[#C0C0C0] mb-10 max-w-xl mx-auto">Lebih dari <span class="text-green-400 font-semibold">50</span> pengguna telah menggunakan layanan kami untuk membantu pekerjaan dan kehidupan sehari-hari mereka.</p>
+    <div class="flex justify-center gap-12 text-center">
+      <div>
+        <p class="text-4xl font-bold text-blue-400">78</p>
+        <p class="text-[#A0A0A0]">Pengguna Aktif</p>
+      </div>
+      <div>
+        <p class="text-4xl font-bold text-purple-400">82%</p>
+        <p class="text-[#A0A0A0]">Tingkat Kepuasan</p>
+      </div>
+    </div>
+  </section>
+
+<!-- Features -->
+<section id="features" class="px-6 py-20 bg-[#0f0f0f]">
+  <h3 class="text-3xl font-extrabold text-center mb-14 tracking-tight bg-gradient-to-r from-yellow-400 via-pink-400 to-blue-500 bg-clip-text text-transparent">
+    Fitur Unggulan ZilAI
+  </h3>
+  <div class="grid md:grid-cols-3 gap-8 lg:p-8">
+    <div class="group bg-[#1e1e1e] p-6 rounded-2xl border border-[#2a2a2a] text-center hover:scale-105 transition-transform duration-300">
+      <i class="bi bi-chat-dots text-4xl mb-4 text-yellow-400 group-hover:animate-bounce"></i>
+      <h4 class="text-lg font-semibold mb-2">Percakapan Natural</h4>
+      <p class="text-[#B0B0B0]">ZilAI bisa ngobrol seperti teman, memahami setiap kalimatmu dengan mudah.</p>
+    </div>
+    <div class="group bg-[#1e1e1e] p-6 rounded-2xl border border-[#2a2a2a] text-center hover:scale-105 transition-transform duration-300">
+      <i class="bi bi-book text-4xl mb-4 text-pink-400 group-hover:animate-pulse"></i>
+      <h4 class="text-lg font-semibold mb-2">Pengetahuan Luas</h4>
+      <p class="text-[#B0B0B0]">Dapatkan informasi dari berbagai topik, dari sains hingga budaya populer.</p>
+    </div>
+    <div class="group bg-[#1e1e1e] p-6 rounded-2xl border border-[#2a2a2a] text-center hover:scale-105 transition-transform duration-300">
+      <i class="bi bi-lightbulb text-4xl mb-4 text-cyan-400 group-hover:animate-spin"></i>
+      <h4 class="text-lg font-semibold mb-2">Pemecahan Masalah</h4>
+      <p class="text-[#B0B0B0]">Bingung? ZilAI siap membantu mencari solusi dari berbagai masalah.</p>
+    </div>
+    <div class="group bg-[#1e1e1e] p-6 rounded-2xl border border-[#2a2a2a] text-center hover:scale-105 transition-transform duration-300">
+      <i class="bi bi-star text-4xl mb-4 text-green-400 group-hover:animate-bounce"></i>
+      <h4 class="text-lg font-semibold mb-2">Rekomendasi Pintar</h4>
+      <p class="text-[#B0B0B0]">Bingung memilih? ZilAI bisa memberi rekomendasi terbaik berdasarkan preferensimu.</p>
+    </div>
+    <div class="group bg-[#1e1e1e] p-6 rounded-2xl border border-[#2a2a2a] text-center hover:scale-105 transition-transform duration-300">
+      <i class="bi bi-lock text-4xl mb-4 text-blue-400 group-hover:animate-spin"></i>
+      <h4 class="text-lg font-semibold mb-2">Keamanan Terjamin</h4>
+      <p class="text-[#B0B0B0]">Data dan privasi kamu adalah prioritas utama, dijaga dengan teknologi terkini.</p>
+    </div>
+    <div class="group bg-[#1e1e1e] p-6 rounded-2xl border border-[#2a2a2a] text-center hover:scale-105 transition-transform duration-300">
+      <i class="bi bi-clock text-4xl mb-4 text-purple-400 group-hover:animate-pulse"></i>
+      <h4 class="text-lg font-semibold mb-2">Respon Cepat</h4>
+      <p class="text-[#B0B0B0]">ZilAI memberikan jawaban instan, selalu siap kapan saja kamu butuh bantuan.</p>
+    </div>
+  </div>
+</section>
+
+
+
+
+<!-- Testimonials -->
+<section class="px-6 py-20 bg-[#0f0f0f]">
+  <h3 class="text-3xl font-extrabold text-center mb-14 tracking-tight bg-gradient-to-r from-yellow-400 via-pink-400 to-blue-500 bg-clip-text text-transparent">
+    Apa Kata Mereka?
+  </h3>
+  <div class="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+    <!-- Testimonial 1 -->
+    <div class="bg-[#1e1e1e] p-6 rounded-2xl border border-[#2a2a2a] group hover:scale-105 transition-transform duration-300">
+      <i class="bi bi-emoji-smile text-4xl mb-4 text-yellow-400 group-hover:text-blue-500"></i>
+      <p class="text-[#B0B0B0] italic">“AI ini luar biasa! Membantu saya dalam menulis dan menganalisis data.”</p>
+      <p class="mt-4 font-semibold text-white">— Budi, Data Analyst</p>
+    </div>
+    <!-- Testimonial 2 -->
+    <div class="bg-[#1e1e1e] p-6 rounded-2xl border border-[#2a2a2a] group hover:scale-105 transition-transform duration-300">
+      <i class="bi bi-person-check text-4xl mb-4 text-pink-400 group-hover:text-yellow-400"></i>
+      <p class="text-[#B0B0B0] italic">“Interface-nya sangat intuitif. Sangat mudah digunakan meskipun saya bukan ahli teknologi.”</p>
+      <p class="mt-4 font-semibold text-white">— Sari, Penulis</p>
+    </div>
+    <!-- Testimonial 3 -->
+    <div class="bg-[#1e1e1e] p-6 rounded-2xl border border-[#2a2a2a] group hover:scale-105 transition-transform duration-300">
+      <i class="bi bi-chat-quote text-4xl mb-4 text-green-400 group-hover:text-pink-500"></i>
+      <p class="text-[#B0B0B0] italic">“ZilAI sangat membantu dalam mengorganisir tugas-tugas saya, dan menghemat banyak waktu!”</p>
+      <p class="mt-4 font-semibold text-white">— Joko, Manajer Proyek</p>
+    </div>
+  </div>
+</section>
+
+
+ <!-- FAQ -->
+<section id="faq" class="px-6 py-20 bg-[#151515]">
+  <h3 class="text-3xl font-extrabold text-center mb-14 tracking-tight bg-gradient-to-r from-green-400 via-yellow-400 to-pink-500 bg-clip-text text-transparent">
+    Pertanyaan Umum
+  </h3>
+  <div class="max-w-3xl mx-auto divide-y divide-[#2c2c2c]">
+    <!-- FAQ Item 1 -->
+    <details class="py-4 group">
+      <summary class="cursor-pointer font-semibold flex items-center gap-2">
+        <i class="bi bi-shield-lock text-xl text-green-400 group-open:text-blue-500"></i> Apakah data saya aman?
+      </summary>
+      <p class="text-[#B0B0B0] mt-2">Ya, kami mengutamakan privasi dan keamanan Anda di atas segalanya.</p>
+    </details>
+    <!-- FAQ Item 2 -->
+    <details class="py-4 group">
+      <summary class="cursor-pointer font-semibold flex items-center gap-2">
+        <i class="bi bi-phone text-xl text-yellow-400 group-open:text-pink-500"></i> Bisakah digunakan di HP?
+      </summary>
+      <p class="text-[#B0B0B0] mt-2">Tentu saja! Aplikasi kami sepenuhnya responsif dan siap untuk perangkat mobile.</p>
+    </details>
+    <!-- FAQ Item 3 -->
+    <details class="py-4 group">
+      <summary class="cursor-pointer font-semibold flex items-center gap-2">
+        <i class="bi bi-globe text-xl text-pink-400 group-open:text-purple-500"></i> Apakah mendukung banyak bahasa?
+      </summary>
+      <p class="text-[#B0B0B0] mt-2">Ya, mendukung berbagai bahasa utama dunia.</p>
+    </details>
+    <!-- FAQ Item 4 -->
+    <details class="py-4 group">
+      <summary class="cursor-pointer font-semibold flex items-center gap-2">
+        <i class="bi bi-question-circle text-xl text-blue-400 group-open:text-yellow-500"></i> Apa itu Gemini 2.0 Flash?
+      </summary>
+      <p class="text-[#B0B0B0] mt-2">Gemini 2.0 Flash adalah versi terbaru yang lebih cepat dan lebih pintar dari AI kami, siap meningkatkan produktivitas Anda.</p>
+    </details>
+    <!-- FAQ Item 5 -->
+    <details class="py-4 group">
+      <summary class="cursor-pointer font-semibold flex items-center gap-2">
+        <i class="bi bi-people text-xl text-green-400 group-open:text-pink-500"></i> Apakah bisa digunakan oleh tim?
+      </summary>
+      <p class="text-[#B0B0B0] mt-2">Tentu! Kami mendukung kolaborasi tim dengan fitur berbasis cloud yang memudahkan pekerjaan tim Anda.</p>
+    </details>
+    <!-- FAQ Item 6 -->
+    <details class="py-4 group">
+      <summary class="cursor-pointer font-semibold flex items-center gap-2">
+        <i class="bi bi-file-earmark-check text-xl text-purple-400 group-open:text-green-500"></i> Apakah ZilAI bisa membuat laporan?
+      </summary>
+      <p class="text-[#B0B0B0] mt-2">Ya, ZilAI dapat membantu Anda membuat laporan berbasis data dengan mudah dan cepat.</p>
+    </details>
+    <!-- FAQ Item 7 -->
+    <details class="py-4 group">
+      <summary class="cursor-pointer font-semibold flex items-center gap-2">
+        <i class="bi bi-clock text-xl text-blue-400 group-open:text-yellow-500"></i> Berapa lama waktu respon AI ZilAI?
+      </summary>
+      <p class="text-[#B0B0B0] mt-2">Respon ZilAI hampir instan berkat teknologi terbaru yang kami gunakan!</p>
+    </details>
+    <!-- FAQ Item 8 -->
+    <details class="py-4 group">
+      <summary class="cursor-pointer font-semibold flex items-center gap-2">
+        <i class="bi bi-battery-charging text-xl text-yellow-400 group-open:text-pink-500"></i> Apakah ZilAI hemat baterai?
+      </summary>
+      <p class="text-[#B0B0B0] mt-2">Ya, ZilAI dirancang untuk hemat energi, baik di desktop maupun mobile.</p>
+    </details>
+    <!-- FAQ Item 9 -->
+    <details class="py-4 group">
+      <summary class="cursor-pointer font-semibold flex items-center gap-2">
+        <i class="bi bi-chat-left-dots text-xl text-pink-400 group-open:text-green-500"></i> Dapatkah ZilAI berbicara dengan saya?
+      </summary>
+      <p class="text-[#B0B0B0] mt-2">Ya, ZilAI dapat memberikan respons berbasis teks dan suara untuk membantu Anda lebih mudah berinteraksi dengan AI.</p>
+    </details>
+  </div>
+</section>
+
+
+  <!-- Footer -->
+  <footer id="contact" class="px-6 py-10 bg-[#151515] text-center border-t border-[#2c2c2c]">
+    <p class="text-[#808080] text-sm">&copy; 2025 ZilAI. Seluruh hak cipta dilindungi.</p>
+  </footer>
+
+  <!-- Responsive JS -->
+  <script>
+    const menuBtn = document.getElementById('menuBtn');
+    const navMenu = document.getElementById('navMenu');
+
+    menuBtn.addEventListener('click', function () {
+      navMenu.classList.toggle('hidden');
+      navMenu.classList.toggle('slide-down');
+    });
+  </script>
+</body>
+</html>
