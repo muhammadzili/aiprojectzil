@@ -56,7 +56,7 @@ const renderConversation = (conversation) => {
     chatHistoryContainer.appendChild(incomingMessageElement);
 
     const messageTextElement = incomingMessageElement.querySelector(".message__text");
-    showTypingEffect(rawApiResponse, parsedApiResponse, messageTextElement, incomingMessageElement, true);
+    showTypingEffect(rawApiResponse, parsedApiResponse, messageTextElement, incomingMessageElement);
 };
 
 const createChatMessageElement = (htmlContent, ...cssClasses) => {
@@ -66,6 +66,15 @@ const createChatMessageElement = (htmlContent, ...cssClasses) => {
     return messageElement;
 };
 
+// Fungsi untuk memformat kode dengan syntax highlighting
+const formatCode = (code) => {
+    const codeBlockRegex = /```([\s\S]*?)```/g;
+    return code.replace(codeBlockRegex, (match, p1) => {
+        return `<pre><code class="language-javascript">${p1}</code></pre>`;
+    });
+};
+
+// Modifikasi fungsi showTypingEffect untuk menampilkan pesan dan kode bertahap
 const showTypingEffect = (rawText, htmlText, messageElement, incomingMessageElement, skipEffect = false) => {
     const copyIconElement = incomingMessageElement.querySelector(".message__icon");
     copyIconElement.classList.add("hide");
@@ -79,22 +88,44 @@ const showTypingEffect = (rawText, htmlText, messageElement, incomingMessageElem
         return;
     }
 
-    const wordsArray = rawText.split(' ');
-    let wordIndex = 0;
+    const isCodeSnippet = rawText.includes('```');
+    if (isCodeSnippet) {
+        let index = 0;
+        let currentText = '';
 
-    const typingInterval = setInterval(() => {
-        messageElement.innerText += (wordIndex === 0 ? '' : ' ') + wordsArray[wordIndex++];
-        if (wordIndex === wordsArray.length) {
-            clearInterval(typingInterval);
-            isGeneratingResponse = false;
-            messageElement.innerHTML = htmlText;
-            hljs.highlightAll();
-            addCopyButtonToCodeBlocks();
-            copyIconElement.classList.remove("hide");
-        }
-    }, 75);
+        // Menampilkan kode sedikit demi sedikit
+        const typingInterval = setInterval(() => {
+            currentText += rawText[index++];
+            messageElement.innerHTML = formatCode(currentText); // Memformat kode sesuai dengan HTML
+
+            if (index === rawText.length) {
+                clearInterval(typingInterval);
+                isGeneratingResponse = false;
+                messageElement.innerHTML = htmlText;
+                hljs.highlightAll();
+                addCopyButtonToCodeBlocks();
+                copyIconElement.classList.remove("hide");
+            }
+        }, 50); // Kecepatan karakter per detik
+    } else {
+        const wordsArray = rawText.split(' ');
+        let wordIndex = 0;
+
+        const typingInterval = setInterval(() => {
+            messageElement.innerText += (wordIndex === 0 ? '' : ' ') + wordsArray[wordIndex++];
+            if (wordIndex === wordsArray.length) {
+                clearInterval(typingInterval);
+                isGeneratingResponse = false;
+                messageElement.innerHTML = htmlText;
+                hljs.highlightAll();
+                addCopyButtonToCodeBlocks();
+                copyIconElement.classList.remove("hide");
+            }
+        }, 75);
+    }
 };
 
+// Fungsi untuk request API response
 const requestApiResponse = async (incomingMessageElement) => {
     const messageTextElement = incomingMessageElement.querySelector(".message__text");
 
@@ -142,6 +173,7 @@ const requestApiResponse = async (incomingMessageElement) => {
     }
 };
 
+// Fungsi untuk menambahkan tombol salin pada blok kode
 const addCopyButtonToCodeBlocks = () => {
     const codeBlocks = document.querySelectorAll('pre');
     codeBlocks.forEach((block) => {
@@ -170,6 +202,7 @@ const addCopyButtonToCodeBlocks = () => {
     });
 };
 
+// Fungsi untuk menampilkan animasi loading
 const displayLoadingAnimation = () => {
     const loadingHtml = `
         <div class="message__content">
