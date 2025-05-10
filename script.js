@@ -245,7 +245,9 @@ suggestionItems.forEach(suggestion => {
 
 messageForm.addEventListener('submit', (e) => {
     e.preventDefault();
+    console.log('Form submit event prevented');
     handleOutgoingMessage();
 });
+
 
 loadSavedChatHistory();
