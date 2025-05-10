@@ -8,8 +8,8 @@ const clearChatButton = document.getElementById("deleteButton");
 let currentUserMessage = null;
 let isGeneratingResponse = false;
 
-const GOOGLE_API_KEY = "AIzaSyAVWbPQNnZAmM114F4j3AygDtVBLJ7L-eI";
-const API_REQUEST_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key=${GOOGLE_API_KEY}`;
+const GROQ_API_KEY = "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"; // ganti dengan kunci kamu
+const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
 
 const loadSavedChatHistory = () => {
     const savedConversations = JSON.parse(localStorage.getItem("saved-api-chats")) || [];
@@ -102,46 +102,53 @@ const requestApiResponse = async (incomingMessageElement) => {
     try {
         const savedConversations = JSON.parse(localStorage.getItem("saved-api-chats")) || [];
 
-        const chatHistory = savedConversations.map(conversation => {
-            return {
-                role: "user",
-                parts: [{ text: conversation.userMessage }]
-            };
-        });
+        const messages = savedConversations.flatMap(conversation => ([
+            { role: "user", content: conversation.userMessage },
+            { role: "assistant", content: conversation.apiResponse }
+        ]));
 
-        chatHistory.push({
+        messages.push({
             role: "user",
-            parts: [{ text: `Kamu adalah ZilAI, asisten pribadi berbasis AI yang menggunakan model Gemini. Jawablah semua pertanyaan dengan sopan, ramah, dan sebutkan kamu adalah ZilAI jika ditanya siapa kamu.\n\nPertanyaan: ${currentUserMessage}` }]
+            content: `Kamu adalah ZilAI, asisten pribadi berbasis AI. Jawablah sopan, ramah, dan sebutkan kamu adalah ZilAI jika ditanya siapa kamu.\n\nPertanyaan: ${currentUserMessage}`
         });
 
-        const response = await fetch(API_REQUEST_URL, {
+        const response = await fetch(GROQ_API_URL, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ contents: chatHistory })
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${GROQ_API_KEY}`
+            },
+            body: JSON.stringify({
+                model: "llama3-70b-8192",
+                messages: messages,
+                temperature: 0.7,
+                stream: false
+            })
         });
 
         const responseData = await response.json();
-        if (!response.ok) throw new Error(responseData.error.message);
+        if (!response.ok) throw new Error(responseData.error?.message || "Request failed");
 
-        const responseText = responseData?.candidates?.[0]?.content?.parts?.[0]?.text;
-        if (!responseText) throw new Error("Maaf, tidak dapat terhubung ke server utama.");
-
+        const responseText = responseData.choices?.[0]?.message?.content || "Maaf, tidak ada balasan.";
         const parsedApiResponse = marked.parse(responseText);
-        const rawApiResponse = responseText;
 
-        showTypingEffect(rawApiResponse, parsedApiResponse, messageTextElement, incomingMessageElement);
+        showTypingEffect(responseText, parsedApiResponse, messageTextElement, incomingMessageElement);
 
-        savedConversations.push({ userMessage: currentUserMessage, apiResponse: responseData });
+        savedConversations.push({
+            userMessage: currentUserMessage,
+            apiResponse: responseText
+        });
         localStorage.setItem("saved-api-chats", JSON.stringify(savedConversations));
 
     } catch (error) {
         isGeneratingResponse = false;
         messageTextElement.innerText = error.message;
-        messageTextElement.closest(".message").classList.add("message--error");
+        incomingMessageElement.classList.add("message--error");
     } finally {
         incomingMessageElement.classList.remove("message--loading");
     }
 };
+
 
 const addCopyButtonToCodeBlocks = () => {
     const codeBlocks = document.querySelectorAll('pre');
