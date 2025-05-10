@@ -87,30 +87,36 @@ body.hide-header .header{
     background: var(--secondary-hover-color);
 }
 
-/* Fallback style kalau ga pakai Tailwind */
-.model-settings {
+.model-selector-container {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  background: #1f2937;
-  padding: 1rem;
-  border-radius: 12px;
-  max-width: 600px;
-  margin: auto;
+  gap: 0.5rem;
+  margin: 2rem auto;
+  max-width: 824px;
+  background: var(--secondary-color);
+  padding: 1rem 1.5rem;
+  border-radius: 0.75rem;
 }
-.model-settings label {
-  font-weight: bold;
-  color: #fff;
+
+.model-selector-container label {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-secondary-color);
 }
-.model-settings select {
-  padding: 0.5rem;
-  border-radius: 8px;
-  background: #374151;
-  color: white;
+
+.model-selector-container select {
+  padding: 0.75rem 1rem;
+  background: var(--focus-color);
+  color: var(--text-color);
   border: none;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  transition: background 0.3s ease;
 }
 
-
+.model-selector-container select:hover {
+  background: var(--focus-hover-color);
+}
 
 .header{
     margin-top: 6vh;
