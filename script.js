@@ -1,243 +1,232 @@
-const messageForm = document.querySelector(".prompt__form");
-const chatHistoryContainer = document.querySelector(".chats");
-const suggestionItems = document.querySelectorAll(".suggests__item");
+document.addEventListener('DOMContentLoaded', function () {
+    const messageForm = document.querySelector(".prompt__form");
+    const chatHistoryContainer = document.querySelector(".chats");
+    const suggestionItems = document.querySelectorAll(".suggests__item");
 
-const themeToggleButton = document.getElementById("themeToggler");
-const clearChatButton = document.getElementById("deleteButton");
+    const themeToggleButton = document.getElementById("themeToggler");
+    const clearChatButton = document.getElementById("deleteButton");
 
-let currentUserMessage = null;
-let isGeneratingResponse = false;
+    let currentUserMessage = null;
+    let isGeneratingResponse = false;
 
-const GROQ_API_KEY = "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";
-const GEMINI_API_KEY = "AIzaSyAMBkHDApedppt92djAmsOeWQryanRyf_w";
+    const GROQ_API_KEY = "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";
+    const GEMINI_API_KEY = "AIzaSyAMBkHDApedppt92djAmsOeWQryanRyf_w";
 
-let selectedProvider = "groq";
-let selectedModel = "llama3-8b-8192";
+    let selectedProvider = "groq";
+    let selectedModel = "llama3-8b-8192";
 
-document.getElementById("providerSelect").addEventListener("change", (e) => {
-  selectedProvider = e.target.value;
-});
-
-document.getElementById("modelSelect").addEventListener("change", (e) => {
-  selectedModel = e.target.value;
-});
-
-const loadSavedChatHistory = () => {
-    const savedConversations = JSON.parse(localStorage.getItem("saved-api-chats")) || [];
-    const isLightTheme = localStorage.getItem("themeColor") === "light_mode";
-
-    document.body.classList.toggle("light_mode", isLightTheme);
-    themeToggleButton.innerHTML = isLightTheme ? '<i class="bi bi-moon-fill"></i>' : '<i class="bi bi-brightness-high-fill"></i>';
-
-    chatHistoryContainer.innerHTML = '';
-    savedConversations.forEach(conversation => {
-        renderConversation(conversation);
+    document.getElementById("providerSelect").addEventListener("change", (e) => {
+        selectedProvider = e.target.value;
     });
 
-    document.body.classList.toggle("hide-header", savedConversations.length > 0);
-};
+    document.getElementById("modelSelect").addEventListener("change", (e) => {
+        selectedModel = e.target.value;
+    });
 
-const renderConversation = (conversation) => {
-    const userMessageHtml = `
-        <div class="message__content">
-            <img class="message__avatar" src="assets/user.png" alt="User">
-            <p class="message__text">${conversation.userMessage}</p>
-        </div>
-    `;
-    const outgoingMessageElement = createChatMessageElement(userMessageHtml, "message--outgoing");
-    chatHistoryContainer.appendChild(outgoingMessageElement);
+    // Load saved chat history from localStorage
+    const loadSavedChatHistory = () => {
+        const savedConversations = JSON.parse(localStorage.getItem("saved-api-chats")) || [];
+        const isLightTheme = localStorage.getItem("themeColor") === "light_mode";
 
-    const responseText = conversation.apiResponse?.candidates?.[0]?.content?.parts?.[0]?.text;
-    const parsedApiResponse = marked.parse(responseText);
-    const rawApiResponse = responseText;
+        document.body.classList.toggle("light_mode", isLightTheme);
+        themeToggleButton.innerHTML = isLightTheme ? '<i class="bi bi-moon-fill"></i>' : '<i class="bi bi-brightness-high-fill"></i>';
 
-    const responseHtml = `
-        <div class="message__content">
-            <img class="message__avatar" src="assets/zilai.png" alt="ZilAI">
-            <p class="message__text"></p>
-            <div class="message__loading-indicator hide">
-                <div class="message__loading-bar"></div>
-                <div class="message__loading-bar"></div>
-                <div class="message__loading-bar"></div>
+        chatHistoryContainer.innerHTML = '';
+        savedConversations.forEach(conversation => {
+            renderConversation(conversation);
+        });
+
+        document.body.classList.toggle("hide-header", savedConversations.length > 0);
+    };
+
+    const renderConversation = (conversation) => {
+        const userMessageHtml = `
+            <div class="message__content">
+                <img class="message__avatar" src="assets/user.png" alt="User">
+                <p class="message__text">${conversation.userMessage}</p>
             </div>
-        </div>
-        <span onClick="copyMessageToClipboard(this)" class="message__icon hide"><i class='bx bx-copy-alt'></i></span>
-    `;
-    const incomingMessageElement = createChatMessageElement(responseHtml, "message--incoming");
-    chatHistoryContainer.appendChild(incomingMessageElement);
+        `;
+        const outgoingMessageElement = createChatMessageElement(userMessageHtml, "message--outgoing");
+        chatHistoryContainer.appendChild(outgoingMessageElement);
 
-    const messageTextElement = incomingMessageElement.querySelector(".message__text");
-    showTypingEffect(rawApiResponse, parsedApiResponse, messageTextElement, incomingMessageElement, true);
-};
+        const responseText = conversation.apiResponse?.candidates?.[0]?.content?.parts?.[0]?.text;
+        const parsedApiResponse = marked.parse(responseText);
+        const rawApiResponse = responseText;
 
-const createChatMessageElement = (htmlContent, ...cssClasses) => {
-    const messageElement = document.createElement("div");
-    messageElement.classList.add("message", ...cssClasses);
-    messageElement.innerHTML = htmlContent;
-    return messageElement;
-};
+        const responseHtml = `
+            <div class="message__content">
+                <img class="message__avatar" src="assets/zilai.png" alt="ZilAI">
+                <p class="message__text"></p>
+                <div class="message__loading-indicator hide">
+                    <div class="message__loading-bar"></div>
+                    <div class="message__loading-bar"></div>
+                    <div class="message__loading-bar"></div>
+                </div>
+            </div>
+            <span onClick="copyMessageToClipboard(this)" class="message__icon hide"><i class='bx bx-copy-alt'></i></span>
+        `;
+        const incomingMessageElement = createChatMessageElement(responseHtml, "message--incoming");
+        chatHistoryContainer.appendChild(incomingMessageElement);
 
-const showTypingEffect = (rawText, htmlText, messageElement, incomingMessageElement, skipEffect = false) => {
-    const copyIconElement = incomingMessageElement.querySelector(".message__icon");
-    copyIconElement.classList.add("hide");
+        const messageTextElement = incomingMessageElement.querySelector(".message__text");
+        showTypingEffect(rawApiResponse, parsedApiResponse, messageTextElement, incomingMessageElement, true);
+    };
 
-    if (skipEffect) {
-        messageElement.innerHTML = htmlText;
-        hljs.highlightAll();
-        addCopyButtonToCodeBlocks();
-        copyIconElement.classList.remove("hide");
-        isGeneratingResponse = false;
-        return;
-    }
+    const createChatMessageElement = (htmlContent, ...cssClasses) => {
+        const messageElement = document.createElement("div");
+        messageElement.classList.add("message", ...cssClasses);
+        messageElement.innerHTML = htmlContent;
+        return messageElement;
+    };
 
-    const wordsArray = rawText.split(' ');
-    let wordIndex = 0;
+    const showTypingEffect = (rawText, htmlText, messageElement, incomingMessageElement, skipEffect = false) => {
+        const copyIconElement = incomingMessageElement.querySelector(".message__icon");
+        copyIconElement.classList.add("hide");
 
-    // Update interval speed to 0.2 second per word
-    const typingInterval = setInterval(() => {
-        messageElement.innerText += (wordIndex === 0 ? '' : ' ') + wordsArray[wordIndex++];
-        if (wordIndex === wordsArray.length) {
-            clearInterval(typingInterval);
-            isGeneratingResponse = false;
+        if (skipEffect) {
             messageElement.innerHTML = htmlText;
             hljs.highlightAll();
             addCopyButtonToCodeBlocks();
             copyIconElement.classList.remove("hide");
+            isGeneratingResponse = false;
+            return;
         }
-    }, 0); 
-};
 
-const requestApiResponse = async (incomingMessageElement) => {
-    const messageTextElement = incomingMessageElement.querySelector(".message__text");
+        const wordsArray = rawText.split(' ');
+        let wordIndex = 0;
 
-    try {
-        const savedConversations = JSON.parse(localStorage.getItem("saved-api-chats")) || [];
+        // Update interval speed to 0.2 second per word
+        const typingInterval = setInterval(() => {
+            messageElement.innerText += (wordIndex === 0 ? '' : ' ') + wordsArray[wordIndex++];
+            if (wordIndex === wordsArray.length) {
+                clearInterval(typingInterval);
+                isGeneratingResponse = false;
+                messageElement.innerHTML = htmlText;
+                hljs.highlightAll();
+                addCopyButtonToCodeBlocks();
+                copyIconElement.classList.remove("hide");
+            }
+        }, 200); // Adjust typing speed if needed
+    };
 
-        const messages = savedConversations.flatMap(conversation => ([
-            { role: "user", content: conversation.userMessage },
-            { role: "assistant", content: conversation.apiResponse }
-        ]));
+    const requestApiResponse = async (incomingMessageElement) => {
+        const messageTextElement = incomingMessageElement.querySelector(".message__text");
 
-        messages.push({
-            role: "user",
-            content: `Kamu adalah ZilAI, asisten pribadi berbasis AI. Jawablah sopan, ramah, dan sebutkan kamu adalah ZilAI jika ditanya siapa kamu.\n\nPertanyaan: ${currentUserMessage}`
-        });
+        try {
+            const savedConversations = JSON.parse(localStorage.getItem("saved-api-chats")) || [];
+            const messages = savedConversations.flatMap(conversation => ([
+                { role: "user", content: conversation.userMessage },
+                { role: "assistant", content: conversation.apiResponse }
+            ]));
 
-let response;
-if (selectedProvider === "groq") {
-  response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${GROQ_API_KEY}`
-    },
-    body: JSON.stringify({
-      model: selectedModel,
-      messages: [
-        { role: "system", content: "Kamu adalah ZilAI, asisten AI pribadi." },
-        { role: "user", content: currentUserMessage }
-      ]
-    })
-  });
-} else if (selectedProvider === "gemini") {
-  response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${selectedModel}:generateContent?key=${GEMINI_API_KEY}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      contents: [
-        { role: "user", parts: [{ text: currentUserMessage }] }
-      ]
-    })
-  });
-}
+            messages.push({
+                role: "user",
+                content: `Kamu adalah ZilAI, asisten pribadi berbasis AI. Jawablah sopan, ramah, dan sebutkan kamu adalah ZilAI jika ditanya siapa kamu.\n\nPertanyaan: ${currentUserMessage}`
+            });
 
+            let response;
+            if (selectedProvider === "groq") {
+                response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${GROQ_API_KEY}`
+                    },
+                    body: JSON.stringify({
+                        model: selectedModel,
+                        messages: [
+                            { role: "system", content: "Kamu adalah ZilAI, asisten AI pribadi." },
+                            { role: "user", content: currentUserMessage }
+                        ]
+                    })
+                });
+            } else if (selectedProvider === "gemini") {
+                response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${selectedModel}:generateContent?key=${GEMINI_API_KEY}`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        contents: [
+                            { role: "user", parts: [{ text: currentUserMessage }] }
+                        ]
+                    })
+                });
+            }
 
+            const responseData = await response.json();
+            if (!response.ok) throw new Error(responseData.error?.message || "Request failed");
 
-        const responseData = await response.json();
-        if (!response.ok) throw new Error(responseData.error?.message || "Request failed");
+            const responseText = responseData.choices?.[0]?.message?.content || "Maaf, tidak ada balasan.";
+            const parsedApiResponse = marked.parse(responseText);
 
-        const responseText = responseData.choices?.[0]?.message?.content || "Maaf, tidak ada balasan.";
-        const parsedApiResponse = marked.parse(responseText);
+            showTypingEffect(responseText, parsedApiResponse, messageTextElement, incomingMessageElement);
 
-        showTypingEffect(responseText, parsedApiResponse, messageTextElement, incomingMessageElement);
+            savedConversations.push({
+                userMessage: currentUserMessage,
+                apiResponse: responseText
+            });
+            localStorage.setItem("saved-api-chats", JSON.stringify(savedConversations));
 
-        savedConversations.push({
-            userMessage: currentUserMessage,
-            apiResponse: responseText
-        });
-        localStorage.setItem("saved-api-chats", JSON.stringify(savedConversations));
+        } catch (error) {
+            isGeneratingResponse = false;
+            messageTextElement.innerText = error.message;
+            incomingMessageElement.classList.add("message--error");
+        } finally {
+            incomingMessageElement.classList.remove("message--loading");
+        }
+    };
 
-    } catch (error) {
-        isGeneratingResponse = false;
-        messageTextElement.innerText = error.message;
-        incomingMessageElement.classList.add("message--error");
-    } finally {
-        incomingMessageElement.classList.remove("message--loading");
-    }
-};
+    const addCopyButtonToCodeBlocks = () => {
+        const codeBlocks = document.querySelectorAll('pre');
+        codeBlocks.forEach((block) => {
+            const codeElement = block.querySelector('code');
+            let language = [...codeElement.classList].find(cls => cls.startsWith('language-'))?.replace('language-', '') || 'Text';
 
+            const languageLabel = document.createElement('div');
+            languageLabel.innerText = language.charAt(0).toUpperCase() + language.slice(1);
+            languageLabel.classList.add('code__language-label');
+            block.appendChild(languageLabel);
 
-const addCopyButtonToCodeBlocks = () => {
-    const codeBlocks = document.querySelectorAll('pre');
-    codeBlocks.forEach((block) => {
-        const codeElement = block.querySelector('code');
-        let language = [...codeElement.classList].find(cls => cls.startsWith('language-'))?.replace('language-', '') || 'Text';
+            const copyButton = document.createElement('button');
+            copyButton.innerHTML = `<i class='bx bx-copy'></i>`;
+            copyButton.classList.add('code__copy-btn');
+            block.appendChild(copyButton);
 
-        const languageLabel = document.createElement('div');
-        languageLabel.innerText = language.charAt(0).toUpperCase() + language.slice(1);
-        languageLabel.classList.add('code__language-label');
-        block.appendChild(languageLabel);
-
-        const copyButton = document.createElement('button');
-        copyButton.innerHTML = `<i class='bx bx-copy'></i>`;
-        copyButton.classList.add('code__copy-btn');
-        block.appendChild(copyButton);
-
-        copyButton.addEventListener('click', () => {
-            navigator.clipboard.writeText(codeElement.innerText).then(() => {
-                copyButton.innerHTML = `<i class='bx bx-check'></i>`;
-                setTimeout(() => copyButton.innerHTML = `<i class='bx bx-copy'></i>`, 2000);
-            }).catch(err => {
-                console.error("Copy failed:", err);
-                alert("Unable to copy text!");
+            copyButton.addEventListener('click', () => {
+                navigator.clipboard.writeText(codeElement.innerText).then(() => {
+                    copyButton.innerHTML = `<i class='bx bx-check'></i>`;
+                    setTimeout(() => copyButton.innerHTML = `<i class='bx bx-copy'></i>`, 2000);
+                }).catch(err => {
+                    console.error("Copy failed:", err);
+                    alert("Unable to copy text!");
+                });
             });
         });
-    });
-};
+    };
 
-const displayLoadingAnimation = () => {
-    const loadingHtml = `
-        <div class="message__content">
-            <img class="message__avatar" src="assets/zilai.png" alt="ZilAI">
-            <p class="message__text"></p>
-            <div class="message__loading-indicator">
-                <div class="message__loading-bar"></div>
-                <div class="message__loading-bar"></div>
-                <div class="message__loading-bar"></div>
+    const displayLoadingAnimation = () => {
+        const loadingHtml = `
+            <div class="message__content">
+                <img class="message__avatar" src="assets/zilai.png" alt="ZilAI">
+                <p class="message__text"></p>
+                <div class="message__loading-indicator">
+                    <div class="message__loading-bar"></div>
+                    <div class="message__loading-bar"></div>
+                    <div class="message__loading-bar"></div>
+                </div>
             </div>
-        </div>
-        <span onClick="copyMessageToClipboard(this)" class="message__icon hide"><i class='bx bx-copy-alt'></i></span>
-    `;
-    const loadingMessageElement = createChatMessageElement(loadingHtml, "message--incoming", "message--loading");
-    chatHistoryContainer.appendChild(loadingMessageElement);
-    requestApiResponse(loadingMessageElement);
-};
+            <span onClick="copyMessageToClipboard(this)" class="message__icon hide"><i class='bx bx-copy-alt'></i></span>
+        `;
+        const loadingMessageElement = createChatMessageElement(loadingHtml, "message--incoming", "message--loading");
+        chatHistoryContainer.appendChild(loadingMessageElement);
+        requestApiResponse(loadingMessageElement);
+    };
 
-const copyMessageToClipboard = (copyButton) => {
-    const messageContent = copyButton.parentElement.querySelector(".message__text").innerText;
-    navigator.clipboard.writeText(messageContent);
-    copyButton.innerHTML = `<i class='bx bx-check'></i>`;
-    setTimeout(() => copyButton.innerHTML = `<i class='bx bx-copy-alt'></i>`, 1000);
-};
-
-let selectedModel = "llama3-8b-8192";
-
-const modelSelect = document.getElementById("modelSelect");
-modelSelect.addEventListener("change", (e) => {
-  selectedModel = e.target.value;
-  console.log("Model dipilih:", selectedModel);
-});
-
+    const copyMessageToClipboard = (copyButton) => {
+        const messageContent = copyButton.parentElement.querySelector(".message__text").innerText;
+        navigator.clipboard.writeText(messageContent);
+        copyButton.innerHTML = `<i class='bx bx-check'></i>`;
+        setTimeout(() => copyButton.innerHTML = `<i class='bx bx-copy-alt'></i>`, 1000);
+    };
 
 const handleOutgoingMessage = () => {
     currentUserMessage = messageForm.querySelector(".prompt__form-input").value.trim() || currentUserMessage;
