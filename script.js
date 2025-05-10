@@ -112,24 +112,33 @@ const showTypingEffect = (rawText, htmlText, messageElement, incomingMessageElem
 const requestApiResponse = async (incomingMessageElement) => {
     const messageTextElement = incomingMessageElement.querySelector(".message__text");
 
-try {
-    const response = await fetch(API_REQUEST_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            contents: [
-                {
-                    role: "user",
-                    parts: [
-                        {
-                            text: `Kamu adalah ZilAI, asisten pribadi berbasis AI yang menggunakan model Gemini. Jawablah semua pertanyaan dengan sopan, ramah, dan sebutkan kamu adalah ZilAI jika ditanya siapa kamu.\n\nPertanyaan: ${currentUserMessage}`
-                        }
-                    ]
-                }
-            ]
-        }),
-    });
-    
+    try {
+        // Ambil chat history yang sudah disimpan
+        const savedConversations = JSON.parse(localStorage.getItem("saved-api-chats")) || [];
+
+        // Menambahkan chat history ke body request
+        const chatHistory = savedConversations.map(conversation => {
+            return {
+                role: "user",
+                parts: [{ text: conversation.userMessage }]
+            };
+        });
+
+        // Tambahkan pesan pengguna terbaru ke history chat
+        chatHistory.push({
+            role: "user",
+            parts: [{ text: `Kamu adalah ZilAI, asisten pribadi berbasis AI yang menggunakan model Gemini. Jawablah semua pertanyaan dengan sopan, ramah, dan sebutkan kamu adalah ZilAI jika ditanya siapa kamu.\n\nPertanyaan: ${currentUserMessage}` }]
+        });
+
+        // Kirim request ke API dengan chat history yang diperbarui
+        const response = await fetch(API_REQUEST_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                contents: chatHistory  // Mengirimkan chat history
+            }),
+        });
+
         const responseData = await response.json();
         if (!response.ok) throw new Error(responseData.error.message);
 
@@ -141,13 +150,14 @@ try {
 
         showTypingEffect(rawApiResponse, parsedApiResponse, messageTextElement, incomingMessageElement);
 
-
+        // Simpan percakapan baru ke dalam localStorage
         let savedConversations = JSON.parse(localStorage.getItem("saved-api-chats")) || [];
         savedConversations.push({
             userMessage: currentUserMessage,
             apiResponse: responseData
         });
         localStorage.setItem("saved-api-chats", JSON.stringify(savedConversations));
+
     } catch (error) {
         isGeneratingResponse = false;
         messageTextElement.innerText = error.message;
@@ -156,6 +166,7 @@ try {
         incomingMessageElement.classList.remove("message--loading");
     }
 };
+
 
 
 const addCopyButtonToCodeBlocks = () => {
