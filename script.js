@@ -19,7 +19,7 @@ const loadSavedChatHistory = () => {
     const isLightTheme = localStorage.getItem("themeColor") === "light_mode";
 
     document.body.classList.toggle("light_mode", isLightTheme);
-    themeToggleButton.innerHTML = isLightTheme ? '<i class="bx bx-moon"></i>' : '<i class="bx bx-sun"></i>';
+    themeToggleButton.innerHTML = isLightTheme ? '<i class="bi bi-moon-fill"></i>' : '<i class="bi bi-brightness-high-fill"></i>';
 
     chatHistoryContainer.innerHTML = '';
 
