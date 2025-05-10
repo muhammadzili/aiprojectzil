@@ -229,6 +229,7 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
 const handleOutgoingMessage = () => {
+    console.log("Sending message...");
     currentUserMessage = messageForm.querySelector(".prompt__form-input").value.trim() || currentUserMessage;
     if (!currentUserMessage || isGeneratingResponse) return;
 
@@ -274,8 +275,8 @@ suggestionItems.forEach(suggestion => {
 });
 
 messageForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    handleOutgoingMessage();
+  e.preventDefault(); // harusnya cegah redirect
+  handleOutgoingMessage();
 });
 
 loadSavedChatHistory();
