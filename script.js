@@ -108,7 +108,7 @@ const requestApiResponse = async (incomingMessageElement) => {
 
         messages.push({
             role: "user",
-            content: `\n\nPertanyaan: ${currentUserMessage}`
+            content: `Jika ditanya tentang zilai ituadalah dirimu. \n\nPertanyaan: ${currentUserMessage}`
         });
 
         const response = await fetch(GROQ_API_URL, {
