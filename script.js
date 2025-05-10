@@ -1,4 +1,3 @@
-
 const messageForm = document.querySelector(".prompt__form");
 const chatHistoryContainer = document.querySelector(".chats");
 const suggestionItems = document.querySelectorAll(".suggests__item");
@@ -6,13 +5,11 @@ const suggestionItems = document.querySelectorAll(".suggests__item");
 const themeToggleButton = document.getElementById("themeToggler");
 const clearChatButton = document.getElementById("deleteButton");
 
-
 let currentUserMessage = null;
 let isGeneratingResponse = false;
 
 const GOOGLE_API_KEY = "AIzaSyAVWbPQNnZAmM114F4j3AygDtVBLJ7L-eI";
 const API_REQUEST_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GOOGLE_API_KEY}`;
-
 
 const loadSavedChatHistory = () => {
     const savedConversations = JSON.parse(localStorage.getItem("saved-api-chats")) || [];
@@ -24,27 +21,21 @@ const loadSavedChatHistory = () => {
     chatHistoryContainer.innerHTML = '';
 
     savedConversations.forEach(conversation => {
-
         const userMessageHtml = `
-
             <div class="message__content">
                 <img class="message__avatar" src="assets/user.png" alt="User">
-               <p class="message__text">${conversation.userMessage}</p>
+                <p class="message__text">${conversation.userMessage}</p>
             </div>
-        
         `;
-
         const outgoingMessageElement = createChatMessageElement(userMessageHtml, "message--outgoing");
         chatHistoryContainer.appendChild(outgoingMessageElement);
-
 
         const responseText = conversation.apiResponse?.candidates?.[0]?.content?.parts?.[0]?.text;
         const parsedApiResponse = marked.parse(responseText);
         const rawApiResponse = responseText;
 
         const responseHtml = `
-        
-           <div class="message__content">
+            <div class="message__content">
                 <img class="message__avatar" src="assets/zilai.png" alt="ZilAI">
                 <p class="message__text"></p>
                 <div class="message__loading-indicator hide">
@@ -54,40 +45,33 @@ const loadSavedChatHistory = () => {
                 </div>
             </div>
             <span onClick="copyMessageToClipboard(this)" class="message__icon hide"><i class='bx bx-copy-alt'></i></span>
-        
         `;
-
         const incomingMessageElement = createChatMessageElement(responseHtml, "message--incoming");
         chatHistoryContainer.appendChild(incomingMessageElement);
 
         const messageTextElement = incomingMessageElement.querySelector(".message__text");
-
-
-        showTypingEffect(rawApiResponse, parsedApiResponse, messageTextElement, incomingMessageElement, true); // 'true' skips typing
+        showTypingEffect(rawApiResponse, parsedApiResponse, messageTextElement, incomingMessageElement, true);
     });
 
     document.body.classList.toggle("hide-header", savedConversations.length > 0);
 };
-
 
 const createChatMessageElement = (htmlContent, ...cssClasses) => {
     const messageElement = document.createElement("div");
     messageElement.classList.add("message", ...cssClasses);
     messageElement.innerHTML = htmlContent;
     return messageElement;
-}
-
+};
 
 const showTypingEffect = (rawText, htmlText, messageElement, incomingMessageElement, skipEffect = false) => {
     const copyIconElement = incomingMessageElement.querySelector(".message__icon");
-    copyIconElement.classList.add("hide"); 
+    copyIconElement.classList.add("hide");
 
     if (skipEffect) {
-
         messageElement.innerHTML = htmlText;
         hljs.highlightAll();
         addCopyButtonToCodeBlocks();
-        copyIconElement.classList.remove("hide"); 
+        copyIconElement.classList.remove("hide");
         isGeneratingResponse = false;
         return;
     }
@@ -108,15 +92,12 @@ const showTypingEffect = (rawText, htmlText, messageElement, incomingMessageElem
     }, 75);
 };
 
-
 const requestApiResponse = async (incomingMessageElement) => {
     const messageTextElement = incomingMessageElement.querySelector(".message__text");
 
     try {
-        // Ambil chat history yang sudah disimpan
         const savedConversations = JSON.parse(localStorage.getItem("saved-api-chats")) || [];
 
-        // Menambahkan chat history ke body request
         const chatHistory = savedConversations.map(conversation => {
             return {
                 role: "user",
@@ -124,18 +105,16 @@ const requestApiResponse = async (incomingMessageElement) => {
             };
         });
 
-        // Tambahkan pesan pengguna terbaru ke history chat
         chatHistory.push({
             role: "user",
             parts: [{ text: `Kamu adalah ZilAI, asisten pribadi berbasis AI yang menggunakan model Gemini. Jawablah semua pertanyaan dengan sopan, ramah, dan sebutkan kamu adalah ZilAI jika ditanya siapa kamu.\n\nPertanyaan: ${currentUserMessage}` }]
         });
 
-        // Kirim request ke API dengan chat history yang diperbarui
         const response = await fetch(API_REQUEST_URL, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-                contents: chatHistory  // Mengirimkan chat history
+                contents: chatHistory
             }),
         });
 
@@ -150,7 +129,6 @@ const requestApiResponse = async (incomingMessageElement) => {
 
         showTypingEffect(rawApiResponse, parsedApiResponse, messageTextElement, incomingMessageElement);
 
-        // Simpan percakapan baru ke dalam localStorage
         let savedConversations = JSON.parse(localStorage.getItem("saved-api-chats")) || [];
         savedConversations.push({
             userMessage: currentUserMessage,
@@ -166,8 +144,6 @@ const requestApiResponse = async (incomingMessageElement) => {
         incomingMessageElement.classList.remove("message--loading");
     }
 };
-
-
 
 const addCopyButtonToCodeBlocks = () => {
     const codeBlocks = document.querySelectorAll('pre');
@@ -197,10 +173,8 @@ const addCopyButtonToCodeBlocks = () => {
     });
 };
 
-
 const displayLoadingAnimation = () => {
     const loadingHtml = `
-
         <div class="message__content">
             <img class="message__avatar" src="assets/zilai.png" alt="ZilAI">
             <p class="message__text"></p>
@@ -211,24 +185,18 @@ const displayLoadingAnimation = () => {
             </div>
         </div>
         <span onClick="copyMessageToClipboard(this)" class="message__icon hide"><i class='bx bx-copy-alt'></i></span>
-    
     `;
-
     const loadingMessageElement = createChatMessageElement(loadingHtml, "message--incoming", "message--loading");
     chatHistoryContainer.appendChild(loadingMessageElement);
-
     requestApiResponse(loadingMessageElement);
 };
 
-
 const copyMessageToClipboard = (copyButton) => {
     const messageContent = copyButton.parentElement.querySelector(".message__text").innerText;
-
     navigator.clipboard.writeText(messageContent);
     copyButton.innerHTML = `<i class='bx bx-check'></i>`;
     setTimeout(() => copyButton.innerHTML = `<i class='bx bx-copy-alt'></i>`, 1000);
 };
-
 
 const handleOutgoingMessage = () => {
     currentUserMessage = messageForm.querySelector(".prompt__form-input").value.trim() || currentUserMessage;
@@ -237,23 +205,19 @@ const handleOutgoingMessage = () => {
     isGeneratingResponse = true;
 
     const outgoingMessageHtml = `
-    
         <div class="message__content">
             <img class="message__avatar" src="assets/user.png" alt="User">
             <p class="message__text"></p>
         </div>
-
     `;
-
     const outgoingMessageElement = createChatMessageElement(outgoingMessageHtml, "message--outgoing");
     outgoingMessageElement.querySelector(".message__text").innerText = currentUserMessage;
     chatHistoryContainer.appendChild(outgoingMessageElement);
 
     messageForm.reset();
     document.body.classList.add("hide-header");
-    setTimeout(displayLoadingAnimation, 100); 
+    setTimeout(displayLoadingAnimation, 100);
 };
-
 
 themeToggleButton.addEventListener('click', () => {
     const isLightTheme = document.body.classList.toggle("light_mode");
