@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const isLightTheme = localStorage.getItem("themeColor") === "light_mode";
 
         document.body.classList.toggle("light_mode", isLightTheme);
-        themeToggleButton.innerHTML = isLightTheme ? '<i class="bi bi-moon-fill"></i>' : '<i class="bi bi-brightness-high-fill"></i>';
+        themeToggleButton.querySelector("i").className = isLightTheme ? "bi bi-moon-fill" : "bi bi-brightness-high-fill";
 
         chatHistoryContainer.innerHTML = '';
         savedConversations.forEach(conversation => {
@@ -49,9 +49,8 @@ document.addEventListener('DOMContentLoaded', function () {
         const outgoingMessageElement = createChatMessageElement(userMessageHtml, "message--outgoing");
         chatHistoryContainer.appendChild(outgoingMessageElement);
 
-        const responseText = conversation.apiResponse?.candidates?.[0]?.content?.parts?.[0]?.text;
+        const responseText = getResponseText(conversation.apiResponse);
         const parsedApiResponse = marked.parse(responseText);
-        const rawApiResponse = responseText;
 
         const responseHtml = `
             <div class="message__content">
@@ -69,7 +68,7 @@ document.addEventListener('DOMContentLoaded', function () {
         chatHistoryContainer.appendChild(incomingMessageElement);
 
         const messageTextElement = incomingMessageElement.querySelector(".message__text");
-        showTypingEffect(rawApiResponse, parsedApiResponse, messageTextElement, incomingMessageElement, true);
+        showTypingEffect(responseText, parsedApiResponse, messageTextElement, incomingMessageElement);
     };
 
     const createChatMessageElement = (htmlContent, ...cssClasses) => {
@@ -107,6 +106,17 @@ document.addEventListener('DOMContentLoaded', function () {
                 copyIconElement.classList.remove("hide");
             }
         }, 200); // Adjust typing speed if needed
+    };
+
+    const getResponseText = (apiResponse) => {
+        // Determine if response is from Gemini or Groq
+        if (typeof apiResponse === "string") {
+            return apiResponse;
+        }
+
+        return apiResponse?.candidates?.[0]?.content?.parts?.[0]?.text ||
+            apiResponse?.choices?.[0]?.message?.content || 
+            "Maaf, tidak ada balasan.";
     };
 
     const requestApiResponse = async (incomingMessageElement) => {
@@ -155,14 +165,14 @@ document.addEventListener('DOMContentLoaded', function () {
             const responseData = await response.json();
             if (!response.ok) throw new Error(responseData.error?.message || "Request failed");
 
-            const responseText = responseData.choices?.[0]?.message?.content || "Maaf, tidak ada balasan.";
+            const responseText = getResponseText(responseData);
             const parsedApiResponse = marked.parse(responseText);
 
             showTypingEffect(responseText, parsedApiResponse, messageTextElement, incomingMessageElement);
 
             savedConversations.push({
                 userMessage: currentUserMessage,
-                apiResponse: responseText
+                apiResponse: responseData
             });
             localStorage.setItem("saved-api-chats", JSON.stringify(savedConversations));
 
@@ -228,55 +238,52 @@ document.addEventListener('DOMContentLoaded', function () {
         setTimeout(() => copyButton.innerHTML = `<i class='bx bx-copy-alt'></i>`, 1000);
     };
 
-const handleOutgoingMessage = () => {
-    console.log("Sending message...");
-    currentUserMessage = messageForm.querySelector(".prompt__form-input").value.trim() || currentUserMessage;
-    if (!currentUserMessage || isGeneratingResponse) return;
+    const handleOutgoingMessage = () => {
+        if (!currentUserMessage || isGeneratingResponse) return;
 
-    isGeneratingResponse = true;
+        isGeneratingResponse = true;
 
-    const outgoingMessageHtml = `
-        <div class="message__content">
-            <img class="message__avatar" src="assets/user.png" alt="User">
-            <p class="message__text"></p>
-        </div>
-    `;
-    const outgoingMessageElement = createChatMessageElement(outgoingMessageHtml, "message--outgoing");
-    outgoingMessageElement.querySelector(".message__text").innerText = currentUserMessage;
-    chatHistoryContainer.appendChild(outgoingMessageElement);
+        const outgoingMessageHtml = `
+            <div class="message__content">
+                <img class="message__avatar" src="assets/user.png" alt="User">
+                <p class="message__text">${currentUserMessage}</p>
+            </div>
+        `;
+        const outgoingMessageElement = createChatMessageElement(outgoingMessageHtml, "message--outgoing");
+        chatHistoryContainer.appendChild(outgoingMessageElement);
 
-    messageForm.reset();
-    document.body.classList.add("hide-header");
-    setTimeout(displayLoadingAnimation, 100);
-};
+        messageForm.reset();
+        document.body.classList.add("hide-header");
+        setTimeout(displayLoadingAnimation, 100);
+    };
 
-themeToggleButton.addEventListener('click', () => {
-    const isLightTheme = document.body.classList.toggle("light_mode");
-    localStorage.setItem("themeColor", isLightTheme ? "light_mode" : "dark_mode");
-    const newIconClass = isLightTheme ? "bi bi-moon-fill" : "bi bi-brightness-high-fill";
-    themeToggleButton.querySelector("i").className = newIconClass;
-});
+    themeToggleButton.addEventListener('click', () => {
+        const isLightTheme = document.body.classList.toggle("light_mode");
+        localStorage.setItem("themeColor", isLightTheme ? "light_mode" : "dark_mode");
+        themeToggleButton.querySelector("i").className = isLightTheme ? "bi bi-moon-fill" : "bi bi-brightness-high-fill";
+    });
 
-clearChatButton.addEventListener('click', () => {
-    if (confirm("Are you sure you want to delete all chat history?")) {
-        localStorage.removeItem("saved-api-chats");
-        loadSavedChatHistory();
+    clearChatButton.addEventListener('click', () => {
+        if (confirm("Are you sure you want to delete all chat history?")) {
+            localStorage.removeItem("saved-api-chats");
+            loadSavedChatHistory();
 
-        currentUserMessage = null;
-        isGeneratingResponse = false;
-    }
-});
+            currentUserMessage = null;
+            isGeneratingResponse = false;
+        }
+    });
 
-suggestionItems.forEach(suggestion => {
-    suggestion.addEventListener('click', () => {
-        currentUserMessage = suggestion.querySelector(".suggests__item-text").innerText;
+    suggestionItems.forEach(suggestion => {
+        suggestion.addEventListener('click', () => {
+            currentUserMessage = suggestion.querySelector(".suggests__item-text").innerText;
+            handleOutgoingMessage();
+        });
+    });
+
+    messageForm.addEventListener('submit', (e) => {
+        e.preventDefault(); // prevent form submission
         handleOutgoingMessage();
     });
-});
 
-messageForm.addEventListener('submit', (e) => {
-  e.preventDefault(); // harusnya cegah redirect
-  handleOutgoingMessage();
+    loadSavedChatHistory();
 });
-
-loadSavedChatHistory();
