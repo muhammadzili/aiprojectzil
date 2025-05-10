@@ -112,19 +112,21 @@ const requestApiResponse = async (incomingMessageElement) => {
             content: `Kamu adalah ZilAI, asisten pribadi berbasis AI. Jawablah sopan, ramah, dan sebutkan kamu adalah ZilAI jika ditanya siapa kamu.\n\nPertanyaan: ${currentUserMessage}`
         });
 
-        const response = await fetch(GROQ_API_URL, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${GROQ_API_KEY}`
-            },
-            body: JSON.stringify({
-                model: "llama3-70b-8192",
-                messages: messages,
-                temperature: 0.7,
-                stream: false
-            })
-        });
+const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${GROQ_API_KEY}`
+    },
+    body: JSON.stringify({
+        model: selectedModel, // <- pakai model terpilih
+        messages: [
+            { role: "system", content: "Kamu adalah ZilAI, asisten pribadi AI." },
+            { role: "user", content: currentUserMessage }
+        ]
+    })
+});
+
 
         const responseData = await response.json();
         if (!response.ok) throw new Error(responseData.error?.message || "Request failed");
@@ -202,6 +204,15 @@ const copyMessageToClipboard = (copyButton) => {
     copyButton.innerHTML = `<i class='bx bx-check'></i>`;
     setTimeout(() => copyButton.innerHTML = `<i class='bx bx-copy-alt'></i>`, 1000);
 };
+
+let selectedModel = "llama3-8b-8192";
+
+const modelSelect = document.getElementById("modelSelect");
+modelSelect.addEventListener("change", (e) => {
+  selectedModel = e.target.value;
+  console.log("Model dipilih:", selectedModel);
+});
+
 
 const handleOutgoingMessage = () => {
     currentUserMessage = messageForm.querySelector(".prompt__form-input").value.trim() || currentUserMessage;
