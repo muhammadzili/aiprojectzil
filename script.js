@@ -238,7 +238,7 @@ const handleOutgoingMessage = () => {
 themeToggleButton.addEventListener('click', () => {
     const isLightTheme = document.body.classList.toggle("light_mode");
     localStorage.setItem("themeColor", isLightTheme ? "light_mode" : "dark_mode");
-    const newIconClass = isLightTheme ? "bx bx-moon" : "bx bx-sun";
+    const newIconClass = isLightTheme ? "bi bi-moon-fill" : "bi bi-brightness-high-fill";
     themeToggleButton.querySelector("i").className = newIconClass;
 });
 
