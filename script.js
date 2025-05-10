@@ -112,15 +112,24 @@ const showTypingEffect = (rawText, htmlText, messageElement, incomingMessageElem
 const requestApiResponse = async (incomingMessageElement) => {
     const messageTextElement = incomingMessageElement.querySelector(".message__text");
 
-    try {
-        const response = await fetch(API_REQUEST_URL, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                contents: [{ role: "user", parts: [{ text: currentUserMessage }] }]
-            }),
-        });
-
+try {
+    const response = await fetch(API_REQUEST_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            contents: [
+                {
+                    role: "user",
+                    parts: [
+                        {
+                            text: `Kamu adalah ZilAI, asisten pribadi berbasis AI yang menggunakan model Gemini. Jawablah semua pertanyaan dengan sopan, ramah, dan sebutkan kamu adalah ZilAI jika ditanya siapa kamu.\n\nPertanyaan: ${currentUserMessage}`
+                        }
+                    ]
+                }
+            ]
+        }),
+    });
+    
         const responseData = await response.json();
         if (!response.ok) throw new Error(responseData.error.message);
 
