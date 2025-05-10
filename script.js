@@ -108,7 +108,7 @@ const requestApiResponse = async (incomingMessageElement) => {
 
         messages.push({
             role: "user",
-            content: `Kamu adalah ZilAI, asisten pribadi berbasis AI. Jawablah sopan, ramah, dan sebutkan kamu adalah ZilAI jika ditanya siapa kamu.\n\nPertanyaan: ${currentUserMessage}`
+            content: `Kamu adalah ZilAI, asisten pribadi berbasis AI. Jawablah sopan, ramah. jika ditanya siapa kamu maka jawab kamu adalah ZilAI mengerti? tapi jangan terlalu menonjolkan bahwa kamu ZilAI hanya jika ditanya \n\nPertanyaan: ${currentUserMessage}`
         });
 
         const response = await fetch(GROQ_API_URL, {
@@ -118,7 +118,7 @@ const requestApiResponse = async (incomingMessageElement) => {
                 "Authorization": `Bearer ${GROQ_API_KEY}`
             },
             body: JSON.stringify({
-                model: "llama3-8b-8192",
+                model: "llama3-70b-8192",
                 messages: messages,
                 temperature: 0.7,
                 stream: false
