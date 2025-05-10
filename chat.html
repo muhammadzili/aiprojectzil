@@ -19,15 +19,22 @@
     </nav>
 
     <header class="header">
-        <div class="model-selector">
+<div class="model-settings">
+  <label for="providerSelect">Provider:</label>
+  <select id="providerSelect">
+    <option value="groq">Groq</option>
+    <option value="gemini">Gemini</option>
+  </select>
+
   <label for="modelSelect">Model:</label>
   <select id="modelSelect">
-    <option value="llama3-8b-8192">LLaMA3 8B (⚡ Cepat)</option>
-    <option value="llama3-70b-8192">LLaMA3 70B (🧠 Pintar)</option>
-    <option value="mixtral-8x7b-32768">Mixtral 8x7B</option>
-    <option value="gemma-7b-it">Gemma 7B</option>
+    <option value="llama3-8b-8192">LLaMA3 8B (Groq)</option>
+    <option value="llama3-70b-8192">LLaMA3 70B (Groq)</option>
+    <option value="gemini-1.5-flash">Gemini 1.5 Flash</option>
+    <option value="gemini-1.5-pro">Gemini 1.5 Pro</option>
   </select>
 </div>
+
 
         <div class="header__title">
             <h1>Halo Aku ZilAI</h1>
