@@ -93,7 +93,7 @@ const showTypingEffect = (rawText, htmlText, messageElement, incomingMessageElem
             addCopyButtonToCodeBlocks();
             copyIconElement.classList.remove("hide");
         }
-    }, 2); // Reduced delay to 200ms for faster typing effect
+    }, 0); 
 };
 
 const requestApiResponse = async (incomingMessageElement) => {
