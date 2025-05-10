@@ -1,3 +1,4 @@
+
 const messageForm = document.querySelector(".prompt__form");
 const chatHistoryContainer = document.querySelector(".chats");
 const suggestionItems = document.querySelectorAll(".suggests__item");
@@ -27,7 +28,7 @@ const loadSavedChatHistory = () => {
         const userMessageHtml = `
 
             <div class="message__content">
-                <img class="message__avatar" src="assets/profile.png" alt="User">
+                <img class="message__avatar" src="assets/user.png" alt="User">
                <p class="message__text">${conversation.userMessage}</p>
             </div>
         
@@ -44,7 +45,7 @@ const loadSavedChatHistory = () => {
         const responseHtml = `
         
            <div class="message__content">
-                <img class="message__avatar" src="assets/gemini.svg" alt="Gemini avatar">
+                <img class="message__avatar" src="assets/zilai.png" alt="ZilAI">
                 <p class="message__text"></p>
                 <div class="message__loading-indicator hide">
                     <div class="message__loading-bar"></div>
@@ -181,7 +182,7 @@ const displayLoadingAnimation = () => {
     const loadingHtml = `
 
         <div class="message__content">
-            <img class="message__avatar" src="assets/gemini.svg" alt="Gemini avatar">
+            <img class="message__avatar" src="assets/zilai.png" alt="ZilAI">
             <p class="message__text"></p>
             <div class="message__loading-indicator">
                 <div class="message__loading-bar"></div>
@@ -218,7 +219,7 @@ const handleOutgoingMessage = () => {
     const outgoingMessageHtml = `
     
         <div class="message__content">
-            <img class="message__avatar" src="assets/profile.png" alt="User">
+            <img class="message__avatar" src="assets/user.png" alt="User">
             <p class="message__text"></p>
         </div>
 
@@ -230,7 +231,7 @@ const handleOutgoingMessage = () => {
 
     messageForm.reset();
     document.body.classList.add("hide-header");
-    setTimeout(displayLoadingAnimation, 500); 
+    setTimeout(displayLoadingAnimation, 100); 
 };
 
 
@@ -263,5 +264,4 @@ messageForm.addEventListener('submit', (e) => {
     handleOutgoingMessage();
 });
 
-// Load saved chat history on page load
 loadSavedChatHistory();
