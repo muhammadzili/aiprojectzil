@@ -96,8 +96,10 @@ const requestApiResponse = async (incomingMessageElement) => {
     const messageTextElement = incomingMessageElement.querySelector(".message__text");
 
     try {
-        const savedConversations = JSON.parse(localStorage.getItem("saved-api-chats")) || [];
+        // Ambil chat history yang sudah disimpan
+        const savedConversations = JSON.parse(localStorage.getItem("saved-api-chats")) || []; // Hapus deklarasi baru di sini
 
+        // Menambahkan chat history ke body request
         const chatHistory = savedConversations.map(conversation => {
             return {
                 role: "user",
@@ -105,16 +107,18 @@ const requestApiResponse = async (incomingMessageElement) => {
             };
         });
 
+        // Tambahkan pesan pengguna terbaru ke history chat
         chatHistory.push({
             role: "user",
             parts: [{ text: `Kamu adalah ZilAI, asisten pribadi berbasis AI yang menggunakan model Gemini. Jawablah semua pertanyaan dengan sopan, ramah, dan sebutkan kamu adalah ZilAI jika ditanya siapa kamu.\n\nPertanyaan: ${currentUserMessage}` }]
         });
 
+        // Kirim request ke API dengan chat history yang diperbarui
         const response = await fetch(API_REQUEST_URL, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-                contents: chatHistory
+                contents: chatHistory  // Mengirimkan chat history
             }),
         });
 
@@ -129,7 +133,7 @@ const requestApiResponse = async (incomingMessageElement) => {
 
         showTypingEffect(rawApiResponse, parsedApiResponse, messageTextElement, incomingMessageElement);
 
-        let savedConversations = JSON.parse(localStorage.getItem("saved-api-chats")) || [];
+        // Simpan percakapan baru ke dalam localStorage
         savedConversations.push({
             userMessage: currentUserMessage,
             apiResponse: responseData
