@@ -106,10 +106,16 @@ const requestApiResponse = async (incomingMessageElement) => {
             { role: "assistant", content: conversation.apiResponse }
         ]));
 
-        messages.push({
-            role: "user",
-            content: `\n\nPertanyaan: ${currentUserMessage}`
-        });
+messages.unshift({
+    role: "system",
+    content: "Kamu adalah ZilAI, asisten pribadi virtual yang profesional, ramah, dan membantu. Jawablah setiap pertanyaan dengan menyebutkan bahwa kamu adalah ZilAI jika relevan, tanpa terdengar kaku atau dipaksakan."
+});
+
+messages.push({
+    role: "user",
+    content: currentUserMessage
+});
+
 
         const response = await fetch(GROQ_API_URL, {
             method: "POST",
