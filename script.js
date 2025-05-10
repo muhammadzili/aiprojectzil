@@ -8,8 +8,19 @@ const clearChatButton = document.getElementById("deleteButton");
 let currentUserMessage = null;
 let isGeneratingResponse = false;
 
-const GROQ_API_KEY = "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"; // ganti dengan kunci kamu
-const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
+const GROQ_API_KEY = "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";
+const GEMINI_API_KEY = "AIzaSyAMBkHDApedppt92djAmsOeWQryanRyf_w";
+
+let selectedProvider = "groq";
+let selectedModel = "llama3-8b-8192";
+
+document.getElementById("providerSelect").addEventListener("change", (e) => {
+  selectedProvider = e.target.value;
+});
+
+document.getElementById("modelSelect").addEventListener("change", (e) => {
+  selectedModel = e.target.value;
+});
 
 const loadSavedChatHistory = () => {
     const savedConversations = JSON.parse(localStorage.getItem("saved-api-chats")) || [];
@@ -112,20 +123,34 @@ const requestApiResponse = async (incomingMessageElement) => {
             content: `Kamu adalah ZilAI, asisten pribadi berbasis AI. Jawablah sopan, ramah, dan sebutkan kamu adalah ZilAI jika ditanya siapa kamu.\n\nPertanyaan: ${currentUserMessage}`
         });
 
-const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+let response;
+if (selectedProvider === "groq") {
+  response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
     method: "POST",
     headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${GROQ_API_KEY}`
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${GROQ_API_KEY}`
     },
     body: JSON.stringify({
-        model: selectedModel, // <- pakai model terpilih
-        messages: [
-            { role: "system", content: "Kamu adalah ZilAI, asisten pribadi AI." },
-            { role: "user", content: currentUserMessage }
-        ]
+      model: selectedModel,
+      messages: [
+        { role: "system", content: "Kamu adalah ZilAI, asisten AI pribadi." },
+        { role: "user", content: currentUserMessage }
+      ]
     })
-});
+  });
+} else if (selectedProvider === "gemini") {
+  response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${selectedModel}:generateContent?key=${GEMINI_API_KEY}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      contents: [
+        { role: "user", parts: [{ text: currentUserMessage }] }
+      ]
+    })
+  });
+}
+
 
 
         const responseData = await response.json();
