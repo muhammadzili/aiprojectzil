@@ -110,7 +110,7 @@ body.hide-header .header{
 
 .header__title p{
     color: var(--heading-secondary-color);
-    font-size: 0.500rem;
+    font-size: 1.25rem;
     font-weight: 600;
 }
 
