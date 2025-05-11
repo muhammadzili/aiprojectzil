@@ -1,3 +1,4 @@
+
 const messageForm = document.querySelector(".prompt__form");
 const chatHistoryContainer = document.querySelector(".chats");
 const suggestionItems = document.querySelectorAll(".suggests__item");
@@ -124,12 +125,13 @@ messages.push({
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${GROQ_API_KEY}`
             },
-            body: JSON.stringify({
-                model: "llama3-70b-8192",
-                messages: messages,
-                temperature: 0.7,
-                stream: false
-            })
+body: JSON.stringify({
+    model: selectedModel,
+    messages: messages,
+    temperature: 0.7,
+    stream: false
+})
+
         });
 
         const responseData = await response.json();
@@ -259,3 +261,11 @@ messageForm.addEventListener('submit', (e) => {
 });
 
 loadSavedChatHistory();
+
+let selectedModel = "llama3-70b-8192";
+const modelSelector = document.getElementById("modelSelect");
+
+modelSelector.addEventListener("change", () => {
+    selectedModel = modelSelector.value;
+    localStorage.setItem("zilai-selected-model", selectedModel);
+});
