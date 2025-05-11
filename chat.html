@@ -12,9 +12,19 @@
 </head>
 
 <body>
-
     <nav class="navbar">
-        <h3 class="navbar__logo">ZiliAiProject</h3>
+        <div class="model-selector">
+    <label for="modelSelect" style="display:none">Model:</label>
+    <select id="modelSelect">
+        <option value="qwen-qwq-32b">Qwen 32B</option>
+        <option value="gemma2-9b-it">Gemma 9B</option>
+        <option value="deepseek-r1-distill-llama-70b">DeepSeek 70B</option>
+        <option value="compound-beta-mini">Compound Beta Mini</option>
+        <option value="llama3-8b-8192">Llama3 8B</option>
+        <option value="llama3-70b-8192" selected>Llama3 70B</option>
+    </select>
+</div>
+
         <button class="navbar__button" id="themeToggler"><i class="bi bi-brightness-high-fill"></i></button>
     </nav>
 
@@ -22,42 +32,41 @@
         <div class="header__title">
             <h1>Halo Aku ZilAI</h1>
             <h2>Apa aku bisa membantumu?</h2>
-            <p>	llama3-70b</p>
         </div>
-        <div class="suggests">
-            <div class="suggests__item">
-                <p class="suggests__item-text">
-                    Berikan tips untuk membantu anak menyelesaikan pekerjaan rumahnya tepat waktu
-                </p>
-                <div class="suggests__item-icon">
-                    <i class="bi bi-stopwatch"></i>
-                </div>
-            </div>
-            <div class="suggests__item">
-                <p class="suggests__item-text">
-                    Bantu saya menulis email di luar kantor
-                </p>
-                <div class="suggests__item-icon">
-                    <i class="bi bi-pencil-square"></i>
-                </div>
-            </div>
-            <div class="suggests__item">
-                <p class="suggests__item-text">
-                    Berikan saya frasa untuk mempelajari bahasa baru
-                </p>
-                <div class="suggests__item-icon">
-                    <i class="bi bi-translate"></i>
-                </div>
-            </div>
-            <div class="suggests__item">
-                <p class="suggests__item-text">
-                    Tunjukkan padaku cara membuat sesuatu dengan tangan
-                </p>
-                <div class="suggests__item-icon">
-                    <i class="bi bi-tools"></i>
-                </div>
-            </div>
+<div class="suggests">
+    <div class="suggests__item">
+        <p class="suggests__item-text">
+            Ringkas artikel ini dalam beberapa poin penting
+        </p>
+        <div class="suggests__item-icon">
+            <i class="bi bi-journal-text"></i>
         </div>
+    </div>
+    <div class="suggests__item">
+        <p class="suggests__item-text">
+            Jelaskan konsep fisika dengan cara sederhana
+        </p>
+        <div class="suggests__item-icon">
+            <i class="bi bi-lightbulb"></i>
+        </div>
+    </div>
+    <div class="suggests__item">
+        <p class="suggests__item-text">
+            Buatkan saya caption menarik untuk Instagram
+        </p>
+        <div class="suggests__item-icon">
+            <i class="bi bi-instagram"></i>
+        </div>
+    </div>
+    <div class="suggests__item">
+        <p class="suggests__item-text">
+            Apa ide hadiah ulang tahun untuk teman saya?
+        </p>
+        <div class="suggests__item-icon">
+            <i class="bi bi-gift"></i>
+        </div>
+    </div>
+</div>
     </header>
 
     <section class="chats"></section>
@@ -84,4 +93,4 @@
     <script src="script.js"></script>
 </body>
 
-</html>
+</html> 
