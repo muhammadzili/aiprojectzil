@@ -264,12 +264,6 @@ loadSavedChatHistory();
 
 let selectedModel = "llama3-70b-8192"; // Default value
 const modelSelector = document.getElementById("modelSelect");
-const optionsToDisable = ["allam-2-7b", "gemma2-9b-it", "deepseek-r1-distill-llama-70b", "compound-beta-mini"];
-
-optionsToDisable.forEach((optionValue) => {
-  const optionElement = modelSelector.querySelector(`option[value="${optionValue}"]`);
-  optionElement.disabled = true;
-});
 
 modelSelector.addEventListener("change", () => {
     selectedModel = modelSelector.value;  // Update the selected model
