@@ -262,10 +262,10 @@ messageForm.addEventListener('submit', (e) => {
 
 loadSavedChatHistory();
 
-let selectedModel = "llama3-70b-8192";
+let selectedModel = "llama3-70b-8192"; // Default value
 const modelSelector = document.getElementById("modelSelect");
 
 modelSelector.addEventListener("change", () => {
-    selectedModel = modelSelector.value;
+    selectedModel = modelSelector.value;  // Update the selected model
     localStorage.setItem("zilai-selected-model", selectedModel);
 });
