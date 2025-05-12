@@ -27,6 +27,9 @@ const loadSavedChatHistory = () => {
     document.body.classList.toggle("hide-header", savedConversations.length > 0);
 };
 
+let selectedModel = "llama3-70b-8192"; 
+const modelSelector = document.getElementById("modelSelect");
+
 const renderConversation = (conversation) => {
     const userMessageHtml = `
         <div class="message__content">
@@ -261,9 +264,6 @@ messageForm.addEventListener('submit', (e) => {
 });
 
 loadSavedChatHistory();
-
-let selectedModel = "llama3-70b-8192"; // Default value
-const modelSelector = document.getElementById("modelSelect");
 
 modelSelector.addEventListener("change", () => {
     selectedModel = modelSelector.value;  // Update the selected model
