@@ -1,4 +1,3 @@
-
 const messageForm = document.querySelector(".prompt__form");
 const chatHistoryContainer = document.querySelector(".chats");
 const suggestionItems = document.querySelectorAll(".suggests__item");
@@ -9,7 +8,7 @@ const clearChatButton = document.getElementById("deleteButton");
 let currentUserMessage = null;
 let isGeneratingResponse = false;
 
-const GROQ_API_KEY = "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"; // ganti dengan kunci kamu
+const GROQ_API_KEY = "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"; // ganti dengan kunci kamu
 const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
 
 const loadSavedChatHistory = () => {
