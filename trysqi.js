@@ -4,7 +4,10 @@ const chatLog = document.getElementById('chat-log'),
     buttonIcon = document.getElementById('button-icon'),
     info = document.querySelector('.info');
 
-const GEMINI_API_KEY = 'AIzaSyDsY4txJ9kibJufN9NV4FoyelaqlU_IX4g'; // ← API key harus dalam string
+const GEMINI_API_KEY = 'AIzaSyDsY4txJ9kibJufN9NV4FoyelaqlU_IX4g';
+
+// Simpan percakapan
+const chatHistory = [];
 
 sendButton.addEventListener('click', sendMessage);
 userInput.addEventListener('keydown', (event) => {
@@ -18,15 +21,23 @@ function sendMessage() {
     if (message === '') return;
 
     appendMessage('user', message);
+    chatHistory.push({ role: 'user', text: message });
     userInput.value = '';
 
     if (message.toLowerCase() === 'developer') {
         setTimeout(() => {
-            appendMessage('bot', 'This Source Coded By Reza Mehdikhanlou\nYoutube : @AsmrProg');
+            const devMsg = 'This Source Coded By Reza Mehdikhanlou\nYoutube : @AsmrProg';
+            appendMessage('bot', devMsg);
+            chatHistory.push({ role: 'model', text: devMsg });
             resetButtonIcon();
         }, 2000);
         return;
     }
+
+    const formattedHistory = chatHistory.map(msg => ({
+        parts: [{ text: msg.text }],
+        role: msg.role
+    }));
 
     const options = {
         method: 'POST',
@@ -34,13 +45,7 @@ function sendMessage() {
             'Content-Type': 'application/json',
             'x-goog-api-key': GEMINI_API_KEY
         },
-        body: JSON.stringify({
-            contents: [
-                {
-                    parts: [{ text: message }]
-                }
-            ]
-        })
+        body: JSON.stringify({ contents: formattedHistory })
     };
 
     fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent', options)
@@ -54,6 +59,7 @@ function sendMessage() {
                 }
             }
             appendMessage('bot', reply);
+            chatHistory.push({ role: 'model', text: reply });
             resetButtonIcon();
         })
         .catch((err) => {
