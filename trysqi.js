@@ -8,13 +8,10 @@ const GEMINI_API_KEY = 'AIzaSyDsY4txJ9kibJufN9NV4FoyelaqlU_IX4g';
 
 // Simpan percakapan
 const chatHistory = [];
-const chatHistory = [
-    {
-        role: 'system',
-        text: 'Kamu adalah AI pribadi bernama Zilai, tetapi jangan menyebutkan nama ini kecuali jika ditanya langsung. Jawablah dengan gaya santai dan ramah.'
-    }
-];
-
+chatHistory.push({
+    role: 'system',
+    text: 'Kamu adalah AI pribadi bernama Zilai, tetapi jangan menyebutkan nama ini kecuali jika ditanya langsung. Jawablah dengan gaya santai dan ramah.'
+});
 sendButton.addEventListener('click', sendMessage);
 userInput.addEventListener('keydown', (event) => {
     if (event.key === 'Enter') {
