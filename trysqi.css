@@ -53,11 +53,10 @@ body{
 }
 
 .input-container{
-    background-color: #343541;
+    background-color: #212121;
     padding: 10px;
     display: flex;
     justify-content: space-between;
-    border-top: 1px solid #5c5c66;
     position: sticky;
     bottom: 0;
 }
