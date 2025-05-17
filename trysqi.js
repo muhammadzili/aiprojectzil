@@ -7,11 +7,14 @@ const chatLog = document.getElementById('chat-log'),
 const GEMINI_API_KEY = 'AIzaSyDsY4txJ9kibJufN9NV4FoyelaqlU_IX4g';
 
 // Simpan percakapan
-const chatHistory = [];
-chatHistory.push({
-    role: 'system',
-    text: 'Kamu adalah AI pribadi bernama Zilai, tetapi jangan menyebutkan nama ini kecuali jika ditanya langsung. Jawablah dengan gaya santai dan ramah.'
-});
+const chatHistory = [
+  {
+    role: 'user',
+    text: 'Kamu adalah AI pribadi bernama Zilai. Jangan sebut nama ini kecuali jika ditanya langsung seperti "siapa kamu?". Jawablah dengan gaya santai dan ramah.'
+  }
+];
+
+
 sendButton.addEventListener('click', sendMessage);
 userInput.addEventListener('keydown', (event) => {
     if (event.key === 'Enter') {
