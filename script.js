@@ -8,9 +8,6 @@ const clearChatButton = document.getElementById("deleteButton");
 let currentUserMessage = null;
 let isGeneratingResponse = false;
 
-const GROQ_API_KEY = "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"; // ganti dengan kunci kamu
-const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
-
 const loadSavedChatHistory = () => {
     const savedConversations = JSON.parse(localStorage.getItem("saved-api-chats")) || [];
     const isLightTheme = localStorage.getItem("themeColor") === "light_mode";
