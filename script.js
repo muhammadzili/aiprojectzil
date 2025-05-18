@@ -8,10 +8,7 @@ const clearChatButton = document.getElementById("deleteButton");
 let currentUserMessage = null;
 let isGeneratingResponse = false;
 
-const GROQ_API_KEY = "...";
-const GROQ_API_URL = "...";
-
-let selectedModel = "llama3-70b-8192";
+let selectedModel = "qwen-qwq-32b";
 const modelSelector = document.getElementById("modelSelect");
 
 const loadSavedChatHistory = () => {
@@ -97,7 +94,7 @@ const showTypingEffect = (rawText, htmlText, messageElement, incomingMessageElem
       addCopyButtonToCodeBlocks();
       copyIconElement.classList.remove("hide");
     }
-  }, 200);
+  }, 1);
 };
 
 const requestApiResponse = async (incomingMessageElement) => {
