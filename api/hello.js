@@ -1,9 +1,3 @@
-// api/hello.js
-export default function handler(req, res) {
-  res.status(200).json({ message: 'Halo dari backend Vercel!' });
-}
-
-
 const messageForm = document.querySelector(".prompt__form");
 const chatHistoryContainer = document.querySelector(".chats");
 const suggestionItems = document.querySelectorAll(".suggests__item");
