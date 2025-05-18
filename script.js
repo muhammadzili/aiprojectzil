@@ -8,6 +8,9 @@ const clearChatButton = document.getElementById("deleteButton");
 let currentUserMessage = null;
 let isGeneratingResponse = false;
 
+const GROQ_API_KEY = "...";
+const GROQ_API_URL = "...";
+
 const loadSavedChatHistory = () => {
     const savedConversations = JSON.parse(localStorage.getItem("saved-api-chats")) || [];
     const isLightTheme = localStorage.getItem("themeColor") === "light_mode";
