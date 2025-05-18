@@ -99,42 +99,62 @@ const showTypingEffect = (rawText, htmlText, messageElement, incomingMessageElem
     }, 1); // Reduced delay to 200ms for faster typing effect
 };
 const requestApiResponse = async (incomingMessageElement) => {
-    const messageTextElement = incomingMessageElement.querySelector(".message__text");
+  const messageTextElement = incomingMessageElement.querySelector(".message__text");
 
-    try {
-        const savedConversations = JSON.parse(localStorage.getItem("saved-api-chats")) || [];
+  try {
+    const savedConversations = JSON.parse(localStorage.getItem("saved-api-chats")) || [];
 
-        const messages = savedConversations.flatMap(conversation => ([
-            { role: "user", content: conversation.userMessage },
-            { role: "assistant", content: conversation.apiResponse }
-        ]));
+    const messages = savedConversations.flatMap(conversation => ([
+      { role: "user", content: conversation.userMessage },
+      { role: "assistant", content: conversation.apiResponse }
+    ]));
 
-messages.unshift({
-    role: "system",
-    content: "Kamu adalah asisten pribadi bernama ZilAI. Jawablah dengan profesional dan alami. Tidak perlu menyebut bahwa kamu adalah ZilAI kecuali ditanya langsung siapa kamu, atau jika konteks percakapan memang relevan untuk menyebutkan namamu."
-});
+    messages.unshift({
+      role: "system",
+      content: "Kamu adalah asisten pribadi bernama ZilAI. Jawablah dengan profesional dan alami. Tidak perlu menyebut bahwa kamu adalah ZilAI kecuali ditanya langsung siapa kamu, atau jika konteks percakapan memang relevan untuk menyebutkan namamu."
+    });
 
+    messages.push({
+      role: "user",
+      content: currentUserMessage
+    });
 
-messages.push({
-    role: "user",
-    content: currentUserMessage
-});
+    const response = await fetch('/api/hello.js', {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        model: selectedModel,
+        messages: messages,
+        temperature: 0.7,
+        stream: false
+      })
+    });
 
+    const responseData = await response.json();
+    if (!response.ok) throw new Error(responseData.error?.message || "Request failed");
 
-        const response = await fetch(GROQ_API_URL, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${GROQ_API_KEY}`
-            },
-body: JSON.stringify({
-    model: selectedModel,
-    messages: messages,
-    temperature: 0.7,
-    stream: false
-})
+    const responseText = responseData.choices?.[0]?.message?.content || "Maaf, tidak ada balasan.";
+    const parsedApiResponse = marked.parse(responseText);
 
-        });
+    showTypingEffect(responseText, parsedApiResponse, messageTextElement, incomingMessageElement);
+
+    savedConversations.push({
+      userMessage: currentUserMessage,
+      apiResponse: responseText
+    });
+    localStorage.setItem("saved-api-chats", JSON.stringify(savedConversations));
+
+  } catch (error) {
+    isGeneratingResponse = false;
+    if(messageTextElement) messageTextElement.innerText = error.message;
+    incomingMessageElement.classList.add("message--error");
+  } finally {
+    incomingMessageElement.classList.remove("message--loading");
+  }
+};
+
 
         const responseData = await response.json();
         if (!response.ok) throw new Error(responseData.error?.message || "Request failed");
