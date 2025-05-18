@@ -119,7 +119,7 @@ const requestApiResponse = async (incomingMessageElement) => {
       content: currentUserMessage
     });
 
-    const response = await fetch('/api/hello.js', {
+    const response = await fetch('/api/hello', {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
